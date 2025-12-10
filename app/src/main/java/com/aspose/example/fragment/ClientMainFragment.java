@@ -102,7 +102,7 @@ public class ClientMainFragment extends Fragment
                 {
                     Activity activity = getActivity();
                     LicenseHandler licenseHandler = new LicenseHandler(licenseFileName, activity);
-                    message = licenseHandler.setupLicense();
+                    message = licenseHandler.trySetupLicense();
                     dialog.setMessage(message);
                     dialog.create().show();
                 }
@@ -170,64 +170,5 @@ public class ClientMainFragment extends Fragment
         });
     }
 
-    class LicenseHandler
-    {
-        String licenseFileName;
-        Activity activity;
-//        AlertDialog.Builder dialog;
 
-        public LicenseHandler(String licenseFileName, Activity activity)
-        {
-            this.licenseFileName = licenseFileName;
-            this.activity = activity;
-        }
-
-        private InputStream readLicenseFile() throws Exception
-        {
-            AssetManager assetManager = activity.getAssets();
-            InputStream inputStream = assetManager.open(licenseFileName);
-            return inputStream;
-        }
-
-        public String getLicenseFileContent() throws Exception
-        {
-            String content = "";
-            try (InputStream inputStream = readLicenseFile())
-            {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(licenseFileName).append("\n\n");
-                while ((receiveString = bufferedReader.readLine()) != null)
-                {
-                    if (receiveString.equals(""))
-                    {
-                        stringBuilder.append(System.getProperty("line.separator"));
-                    } else
-                    {
-                        stringBuilder.append(receiveString).append("\n");
-                    }
-                }
-                content = stringBuilder.toString();
-                Log.d(TAG, content);
-                return content;
-            }
-        }
-
-        public String setupLicense() throws Exception
-        {
-            InputStream inputStream = readLicenseFile();
-            try
-            {
-                License lic = new License();
-                lic.setLicense(inputStream);
-                return "License installed";
-            }
-            finally
-            {
-                inputStream.close();
-            }
-        }
-    }
 }

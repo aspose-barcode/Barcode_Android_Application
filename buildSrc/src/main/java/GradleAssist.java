@@ -32,9 +32,15 @@ public class GradleAssist
     public static GitHubCredentials readGitHubCredentials(String filePath)
     {
         Properties properties = readProperties(filePath);
-        String userName = properties.get("github.user").toString();
-        String key = properties.get("github.key").toString();
-        GitHubCredentials gitHubCredentials = new GitHubCredentials(userName, key);
-        return gitHubCredentials;
+        String userName = properties.getProperty("github.user");
+        String key = properties.getProperty("github.key");
+
+        if (userName == null || key == null)
+        {
+            System.out.println(TAG + " GitHub credentials not found in " + filePath);
+            return null;
+        }
+        return new GitHubCredentials(userName, key);
     }
+
 }

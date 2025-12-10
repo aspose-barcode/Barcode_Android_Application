@@ -4,7 +4,14 @@ apply plugin: 'maven-publish'
 project.description = 'Aspose Barcode Android Application'
 def proguardFileName = "gradles/proguard.app.conf"
 
-def githubCredentials = GradleAssist.readGitHubCredentials("$rootDir/local.environment");
+def githubCredentials = GradleAssist.readGitHubCredentials("$rootDir/local.environment")
+
+if (githubCredentials != null) {
+    println "GitHub user: ${githubCredentials.getUserName()}"
+} else {
+    // Skip GitHub setup
+    println "GitHub credentials not found. Skipping GitHub setup."
+}
 
 publishing {
     publications {
@@ -16,18 +23,23 @@ publishing {
         }
     }
 
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/aspose-barcode/Barcode_Android_Application")
+    if (githubCredentials != null) {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/aspose-barcode/Barcode_Android_Application")
 
-            credentials {
-                username = githubCredentials.userName;
-                password = githubCredentials.password;
+                credentials {
+                    username = githubCredentials.userName
+                    password = githubCredentials.password
+                }
             }
         }
+    } else {
+        println("GitHub credentials not found. Skipping Maven publish configuration.")
     }
 }
+
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
